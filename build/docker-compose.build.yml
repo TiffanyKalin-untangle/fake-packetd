@@ -1,0 +1,29 @@
+version: '2'
+services:
+    musl:
+      image: untangleinc/fake-packetd:build-musl
+      volumes:
+        - ..:/go/fake-packetd
+
+    glibc:
+      image: untangleinc/fake-packetd:build-glibc
+      volumes:
+        - ..:/go/fake-packetd
+
+    # the next 2 services allow for local changes and tests to the
+    # docker images, before pushing new official ones to GitHub: the
+    # build images are being built locally
+
+    musl-local:
+      build:
+        context: .
+        dockerfile: Dockerfile.build-musl
+      volumes:
+        - ..:/go/fake-packetd
+
+    glibc-local:
+      build:
+        context: .
+        dockerfile: Dockerfile.build-glibc
+      volumes:
+        - ..:/go/fake-packetd
