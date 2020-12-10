@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/untangle/packetd/services/logger"
-	"github.com/TiffanyKalin-untangle/fake-packetd/services/fake-restd"
+	"github.com/TiffanyKalin-untangle/fake-packetd/services/zmqd"
 )
 
 var shutdownFlag bool
@@ -24,7 +24,6 @@ func main() {
 		}
 	}
 
-	logger.Info("Shutdown fake-packetd...\n")
 	stopServices()
 	
 }
@@ -32,11 +31,13 @@ func main() {
 func startServices() {
 	setIsShutdown(false)
 	logger.Startup()
-	fake_restd.Startup()
+	zmqd.Startup()
 	logger.Info("fake-packetd starting up...\n")
 }
 
 func stopServices() {
+	logger.Info("Shutdown fake-packetd...\n")
+	zmqd.Shutdown()
 	logger.Shutdown()
 }
 
