@@ -14,8 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-cmd/restd/restd
-cmd/restd/restd-*
+cmd/fake-packetd/fake-packetd
+cmd/fake-packetd/fake-packetd-*
 core
 .go_work/
 .pkgdir/
