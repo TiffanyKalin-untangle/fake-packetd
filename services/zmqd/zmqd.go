@@ -54,9 +54,8 @@ func socketServer() {
 				// Process message
 				time.Sleep(time.Second)
 
-				reply := "World"
-				socket.Send(reply, 0)
-				logger.Info("Sent ", reply, "\n")
+				socket.Send(msg, 0)
+				logger.Info("Sent ", msg, "\n")
 			}
 		} 
 	}(&wg, zmqSocket)
