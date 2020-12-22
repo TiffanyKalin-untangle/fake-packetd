@@ -6,7 +6,9 @@ import (
 	"time"
 
 	zmq "github.com/pebbe/zmq4"
-	"github.com/untangle/packetd/services/logger"
+	"github.com/untangle/golang-shared/services/logger"
+	zreq "github.com/untangle/golang-shared/structs/protocolbuffers/ZMQRequest"
+	"google.golang.org/protobuf/proto"
 )
 
 var isShutdown = make(chan struct{})
@@ -42,21 +44,41 @@ func socketServer() {
 				return
 			case <-tick:
 				logger.Info("Listening for requests\n")
-				msg, err := socket.Recv(zmq.DONTWAIT)
+				request, err := socket.RecvMessageBytes(zmq.DONTWAIT)
 				if err != nil {
 					if zmq.AsErrno(err) != zmq.AsErrno(syscall.EAGAIN) {
 						logger.Warn("Error on receive ", err, "\n")
 					}
 					continue
 				}
-				logger.Info("Received ", string(msg), "\n")
+				logger.Info("Received ", request, "\n")
 
 				// Process message
-				time.Sleep(time.Second)
+				reply, err := processMessage(request)
+				if err != nil {
+					logger.Warn("Error on processing ", err, "\n")
+					continue
+				}
 
-				socket.Send(msg, 0)
-				logger.Info("Sent ", msg, "\n")
+				socket.SendMessage(reply)
+				logger.Info("Sent ", reply, "\n")
 			}
 		} 
 	}(&wg, zmqSocket)
+}
+
+func processMessage(msgRaw [][]byte) (processedReply []byte, processErr error) {
+	reply := &zreq.ZMQRequest{}
+	if err := proto.Unmarshal(msgRaw[0], reply); err != nil {
+		return nil, err
+	}
+
+	time.Sleep(time.Second)
+
+	encodedReply, err := proto.Marshal(reply)
+	if err != nil {
+		return nil, err
+	}
+
+	return encodedReply, nil
 }
