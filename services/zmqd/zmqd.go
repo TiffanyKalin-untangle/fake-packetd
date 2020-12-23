@@ -1,14 +1,18 @@
 package zmqd
 
 import (
+	"errors"
 	"sync"
 	"syscall"
 	"time"
 
 	zmq "github.com/pebbe/zmq4"
 	"github.com/untangle/golang-shared/services/logger"
+	"github.com/TiffanyKalin-untangle/fake-packetd/services/dispatch"
 	zreq "github.com/untangle/golang-shared/structs/protocolbuffers/ZMQRequest"
+	prep "github.com/untangle/golang-shared/structs/protocolbuffers/PacketdReply"
 	"google.golang.org/protobuf/proto"
+	spb "google.golang.org/protobuf/types/known/structpb"
 )
 
 var isShutdown = make(chan struct{})
@@ -44,19 +48,25 @@ func socketServer() {
 				return
 			case <-tick:
 				logger.Info("Listening for requests\n")
-				request, err := socket.RecvMessageBytes(zmq.DONTWAIT)
+				requestRaw, err := socket.RecvMessageBytes(zmq.DONTWAIT)
 				if err != nil {
 					if zmq.AsErrno(err) != zmq.AsErrno(syscall.EAGAIN) {
 						logger.Warn("Error on receive ", err, "\n")
 					}
 					continue
 				}
-				logger.Info("Received ", request, "\n")
 
 				// Process message
+				request := &zreq.ZMQRequest{}
+				if err := proto.Unmarshal(requestRaw[0], request); err != nil {
+					logger.Warn("Error on unmasharlling ", err, "\n")
+					continue
+				}
+				logger.Info("Received ", request, "\n")
+
 				reply, err := processMessage(request)
 				if err != nil {
-					logger.Warn("Error on processing ", err, "\n")
+					logger.Warn("Error on processing reply: ", err, "\n")
 					continue
 				}
 
@@ -67,17 +77,28 @@ func socketServer() {
 	}(&wg, zmqSocket)
 }
 
-func processMessage(msgRaw [][]byte) (processedReply []byte, processErr error) {
-	reply := &zreq.ZMQRequest{}
-	if err := proto.Unmarshal(msgRaw[0], reply); err != nil {
-		return nil, err
-	}
+func processMessage(request *zreq.ZMQRequest) (processedReply []byte, processErr error) {
+	function := request.Function
+	reply := &prep.PacketdReply{}
 
-	time.Sleep(time.Second)
+	if function == "GetConntrackTable" {
+		conntrackTable := dispatch.GetConntrackTable()
+		for _, v := range conntrackTable {
+			conntrackStruct, err := spb.NewStruct(v)
+
+			if err != nil {
+				return nil, errors.New("Error getting conntrack table: " + err.Error())
+			}
+
+			reply.Conntracks = append(reply.Conntracks, conntrackStruct)
+		}
+		
+		
+	}
 
 	encodedReply, err := proto.Marshal(reply)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Error encoding reply: " + err.Error())
 	}
 
 	return encodedReply, nil

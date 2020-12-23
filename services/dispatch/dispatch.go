@@ -17,16 +17,16 @@ func Shutdown() {
 
 }
 
-func GetConntrackTable() {
-	conntrackTable = make(map[uint32]*Conntrack)
-	for i := 1; i++; i <= 10 {
-		conntrack := new(Conntrack)
-		conntrack.ConntrackID = i * 1000
-		conntrack.TimestampStart = time.Now()
+func GetConntrackTable() ([]map[string]interface{}) {
+	var conntrackTable []map[string]interface{}
+	for i := 1; i <= 10; i++ {
+		conntrack := make(map[string]interface{})
+		conntrack["conntrack_id"] = uint32(i * 1000)
+		conntrack["timestamp_start"]= uint64(1+i)
 		time.Sleep(time.Millisecond)
-		conntrack.TimestampStop = time.Now()
+		conntrack["timestamp_stop"] = uint64(2+i)
 
-		conntrackTable[i] = conntrack
+		conntrackTable = append(conntrackTable, conntrack)
 	}
 
 	return conntrackTable

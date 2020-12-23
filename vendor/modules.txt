@@ -1,11 +1,15 @@
+# github.com/golang/protobuf v1.4.3
+github.com/golang/protobuf/ptypes/struct
 # github.com/pebbe/zmq4 v1.2.2
 github.com/pebbe/zmq4
-# github.com/untangle/golang-shared v0.0.0-20201222215402-013a0a8de782
+# github.com/untangle/golang-shared v0.0.0-20201223182702-8f34fda60b52
 github.com/untangle/golang-shared/services/logger
+github.com/untangle/golang-shared/structs/protocolbuffers/PacketdReply
 github.com/untangle/golang-shared/structs/protocolbuffers/ZMQRequest
 github.com/untangle/golang-shared/services/overseer
 # google.golang.org/protobuf v1.25.0
 google.golang.org/protobuf/proto
+google.golang.org/protobuf/types/known/structpb
 google.golang.org/protobuf/reflect/protoreflect
 google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/encoding/protowire
@@ -19,15 +23,17 @@ google.golang.org/protobuf/internal/pragma
 google.golang.org/protobuf/internal/strs
 google.golang.org/protobuf/reflect/protoregistry
 google.golang.org/protobuf/runtime/protoiface
+google.golang.org/protobuf/encoding/protojson
 google.golang.org/protobuf/internal/filedesc
 google.golang.org/protobuf/internal/filetype
 google.golang.org/protobuf/internal/impl
 google.golang.org/protobuf/internal/version
 google.golang.org/protobuf/internal/detrand
+google.golang.org/protobuf/internal/encoding/json
+google.golang.org/protobuf/internal/set
 google.golang.org/protobuf/internal/descfmt
 google.golang.org/protobuf/internal/descopts
 google.golang.org/protobuf/internal/encoding/defval
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/internal/encoding/tag
 google.golang.org/protobuf/internal/encoding/text
-google.golang.org/protobuf/internal/set
