@@ -13,6 +13,10 @@ import (
 
 type packetdProc int 
 
+const (
+	GET_SESSIONS = zreq.ZMQRequest_GET_SESSIONS
+)
+
 func Startup() {
 	processer := packetdProc(0)
 	rzs.Startup(processer)
@@ -26,7 +30,8 @@ func (p packetdProc) Process(request *zreq.ZMQRequest) (processedReply []byte, p
 	function := request.Function
 	reply := &prep.PacketdReply{}
 
-	if function == "GetConntrackTable" {
+	switch function {
+	case GET_SESSIONS:
 		conntrackTable := dispatch.GetConntrackTable()
 		for _, v := range conntrackTable {
 			conntrackStruct, err := spb.NewStruct(v)
@@ -36,9 +41,7 @@ func (p packetdProc) Process(request *zreq.ZMQRequest) (processedReply []byte, p
 			}
 
 			reply.Conntracks = append(reply.Conntracks, conntrackStruct)
-		}
-		
-		
+		}	
 	}
 
 	encodedReply, err := proto.Marshal(reply)

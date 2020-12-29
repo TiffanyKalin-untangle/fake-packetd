@@ -2,7 +2,7 @@
 github.com/golang/protobuf/ptypes/struct
 # github.com/pebbe/zmq4 v1.2.2
 github.com/pebbe/zmq4
-# github.com/untangle/golang-shared v0.0.0-20201228152641-b47da6361e88
+# github.com/untangle/golang-shared v0.0.0-20201228211557-9341c96a1ee8
 github.com/untangle/golang-shared/services/logger
 github.com/untangle/golang-shared/services/restdZmqServer
 github.com/untangle/golang-shared/structs/protocolbuffers/PacketdReply
