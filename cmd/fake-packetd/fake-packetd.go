@@ -20,7 +20,7 @@ func main() {
 	for !getShutdown() {
 		select {
 		case <-time.After(2 * time.Second):
-			logger.Info("fake-packetd is running...\n")
+			logger.Debug("fake-packetd is running...\n")
 		}
 	}
 
